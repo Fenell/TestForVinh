@@ -47,9 +47,9 @@
             this.label6 = new System.Windows.Forms.Label();
             this.txtDiaChi = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
-            this.cbbChucVu = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
             this.txtTim = new System.Windows.Forms.TextBox();
+            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             ((System.ComponentModel.ISupportInitialize)(this.dgvNhanvien)).BeginInit();
             this.SuspendLayout();
             // 
@@ -225,14 +225,6 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // cbbChucVu
-            // 
-            this.cbbChucVu.FormattingEnabled = true;
-            this.cbbChucVu.Location = new System.Drawing.Point(98, 244);
-            this.cbbChucVu.Name = "cbbChucVu";
-            this.cbbChucVu.Size = new System.Drawing.Size(173, 23);
-            this.cbbChucVu.TabIndex = 5;
-            // 
             // label7
             // 
             this.label7.AutoSize = true;
@@ -251,13 +243,20 @@
             this.txtTim.Text = "Tim kiem..";
             this.txtTim.TextChanged += new System.EventHandler(this.txtTim_TextChanged);
             // 
+            // dateTimePicker1
+            // 
+            this.dateTimePicker1.Location = new System.Drawing.Point(361, 34);
+            this.dateTimePicker1.Name = "dateTimePicker1";
+            this.dateTimePicker1.Size = new System.Drawing.Size(200, 23);
+            this.dateTimePicker1.TabIndex = 7;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.dateTimePicker1);
             this.Controls.Add(this.txtTim);
-            this.Controls.Add(this.cbbChucVu);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.btnRs);
             this.Controls.Add(this.btnXoa);
@@ -307,8 +306,8 @@
         private Label label6;
         private TextBox txtDiaChi;
         private Button button1;
-        private ComboBox cbbChucVu;
         private Label label7;
         private TextBox txtTim;
+        private DateTimePicker dateTimePicker1;
     }
 }

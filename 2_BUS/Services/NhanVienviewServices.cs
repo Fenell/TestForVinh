@@ -51,22 +51,40 @@ namespace _2_BUS.Services
             return "k thanh cong";
         }
 
+        public List<NhanVienView> FindNhanVien(string str)
+        {
+            throw new NotImplementedException();
+        }
+
 
         public List<NhanVienView> GetAllNhanVienViews()
         {
+            //var lst = (from nv in _iNhanVienRepositories.GetAllNhanVienFromDb()
+            //    join chucVu in _iChucVuRes.GetChucVuFromDb() on nv.IdCv equals chucVu.Id 
+            //    select new NhanVienView()
+            //    {
+            //        NhanVien = nv,
+            //        ChucVu = chucVu
+            //    }).ToList();
+            //return lst;
+
+            //left join
+
             var lst = (from nv in _iNhanVienRepositories.GetAllNhanVienFromDb()
-                join chucVu in _iChucVuRes.GetChucVuFromDb() on nv.IdCv equals chucVu.Id
+                join cv in _iChucVuRes.GetChucVuFromDb() on nv.IdCv equals cv.Id into a
+                from chucVu in a.DefaultIfEmpty()
                 select new NhanVienView()
                 {
-                    NhanVien = nv,
-                    ChucVu = chucVu
+                    Ho = nv.Ho,
+                    TenDem = nv.TenDem,
+                    Ten = nv.Ten,
+                    DiaChi = nv.DiaChi,
+                    GioiTinh = nv.GioiTinh,
+                    Sdt = nv.Sdt,
+                    ChucVu = nv.IdCv != null? chucVu.Ten: ""
                 }).ToList();
             return lst;
         }
-        public List<NhanVienView> FindNhanVien(string str)
-        {
-            var lst = GetAllNhanVienViews().Where(c => c.NhanVien.DiaChi.ToLower().Contains(str.ToLower())).ToList();
-            return lst;
-        }
+        
     }
 }

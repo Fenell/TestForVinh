@@ -1,28 +1,25 @@
 ﻿using _1_DAL.Models;
 using _2_BUS.IServices;
 using _2_BUS.Services;
+using _2_BUS.Ulitity;
 
 namespace _3_GUI
 {
     public partial class Form1 : Form
     {
         INhanVienViewService _nhanvienViewService;
+        private Validate _validate;
         private Guid _id;
 
         public Form1()
         {
             InitializeComponent();
             _nhanvienViewService = new NhanVienviewServices();
+            _validate = new Validate();
         }
 
         void LoadData()
         {
-            //load Combobox
-            cbbChucVu.DisplayMember = "Ten";
-            //lấy value là Id
-            cbbChucVu.ValueMember = "Id";
-            cbbChucVu.DataSource = _nhanvienViewService.GetAllNhanVienViews().Select(x => x.ChucVu).ToList();
-
             dgvNhanvien.ColumnCount = 6;
             dgvNhanvien.Columns[0].Visible = false;
             dgvNhanvien.Columns[1].Name = "Ho va ten";
@@ -34,8 +31,8 @@ namespace _3_GUI
             dgvNhanvien.Rows.Clear();
             foreach (var x in _nhanvienViewService.GetAllNhanVienViews())
             {
-                dgvNhanvien.Rows.Add(x.NhanVien.Id, $"{x.NhanVien.Ho} {x.NhanVien.TenDem} {x.NhanVien.Ten}",
-                    x.NhanVien.Sdt, x.NhanVien.GioiTinh, x.NhanVien.DiaChi, x.ChucVu.Ten);
+                dgvNhanvien.Rows.Add(x.idNV, $"{x.Ho} {x.TenDem} {x.Ten}",
+                    x.Sdt, x.GioiTinh, x.DiaChi, x.ChucVu);
             }
 
         }
@@ -50,8 +47,22 @@ namespace _3_GUI
                 Sdt = txtSdt.Text,
                 GioiTinh = rBtnNam.Checked? "Nam": "Nu",
                 DiaChi = txtDiaChi.Text,
-                IdCv = Guid.Parse(cbbChucVu.SelectedValue.ToString())
             };
+            if (!_validate.CheckTen(txtTen.Text) || !_validate.CheckTen(txtHo.Text) || !_validate.CheckTen(txTenDem.Text))
+            {
+                MessageBox.Show("Sai ten");
+                return;
+            }
+            if (!_validate.CheckSdt(txtSdt.Text))
+            {
+                MessageBox.Show("sai sdt");
+                return;
+            }
+
+            if (DateTime.Now.Year - dateTimePicker1.Value.Year < 18)
+            {
+                
+            }
             MessageBox.Show(_nhanvienViewService.AddNhanVien(nhanVien));
             LoadData();
         }
@@ -67,7 +78,6 @@ namespace _3_GUI
                 Sdt = txtSdt.Text,
                 GioiTinh = rBtnNam.Checked? "Nam": "Nu",
                 DiaChi = txtDiaChi.Text,
-                IdCv = Guid.Parse(cbbChucVu.SelectedValue.ToString())
             };
             MessageBox.Show(_nhanvienViewService.UpdateNhanVien(nhanVien));
             LoadData();
@@ -94,16 +104,15 @@ namespace _3_GUI
             }
 
             _id = Guid.Parse(dgvNhanvien.Rows[rowIndex].Cells[0].Value.ToString());
-            var nhanvien = _nhanvienViewService.GetAllNhanVienViews().FirstOrDefault(c => c.NhanVien.Id == _id);
+            var nhanvien = _nhanvienViewService.GetAllNhanVienViews().FirstOrDefault(c => c.idNV == _id);
 
-            txTenDem.Text = nhanvien.NhanVien.TenDem;
-            txtSdt.Text = nhanvien.NhanVien.Sdt;
-            txtHo.Text = nhanvien.NhanVien.Ho;
-            txtTen.Text = nhanvien.NhanVien.Ten;
-            txtDiaChi.Text = nhanvien.NhanVien.DiaChi;
-            cbbChucVu.Text = nhanvien.ChucVu.Ten;
+            txTenDem.Text = nhanvien.TenDem;
+            txtSdt.Text = nhanvien.Sdt;
+            txtHo.Text = nhanvien.Ho;
+            txtTen.Text = nhanvien.Ten;
+            txtDiaChi.Text = nhanvien.DiaChi;
             
-            if (nhanvien.NhanVien.GioiTinh == "Nam")
+            if (nhanvien.GioiTinh == "Nam")
             {
                 rBtnNam.Checked = true;
                 return;
@@ -114,25 +123,25 @@ namespace _3_GUI
 
         private void txtTim_TextChanged(object sender, EventArgs e)
         {
-            cbbChucVu.DisplayMember = "Ten";
-            //lấy value là Id
-            cbbChucVu.ValueMember = "Id";
-            cbbChucVu.DataSource = _nhanvienViewService.GetAllNhanVienViews().Select(x => x.ChucVu).ToList();
+            //cbbChucVu.DisplayMember = "Ten";
+            ////lấy value là Id
+            //cbbChucVu.ValueMember = "Id";
+            //cbbChucVu.DataSource = _nhanvienViewService.GetAllNhanVienViews().Select(x => x.ChucVu).ToList();
 
-            dgvNhanvien.ColumnCount = 6;
-            dgvNhanvien.Columns[0].Visible = false;
-            dgvNhanvien.Columns[1].Name = "Ho va ten";
-            dgvNhanvien.Columns[2].Name = "Sdt";
-            dgvNhanvien.Columns[3].Name = "Gioi tinh";
-            dgvNhanvien.Columns[4].Name = "Dia chi";
-            dgvNhanvien.Columns[5].Name = "Chuc vu";
+            //dgvNhanvien.ColumnCount = 6;
+            //dgvNhanvien.Columns[0].Visible = false;
+            //dgvNhanvien.Columns[1].Name = "Ho va ten";
+            //dgvNhanvien.Columns[2].Name = "Sdt";
+            //dgvNhanvien.Columns[3].Name = "Gioi tinh";
+            //dgvNhanvien.Columns[4].Name = "Dia chi";
+            //dgvNhanvien.Columns[5].Name = "Chuc vu";
 
-            dgvNhanvien.Rows.Clear();
-            foreach (var x in _nhanvienViewService.GetAllNhanVienViews().Where(c=>c.NhanVien.DiaChi.ToLower().Contains(txtTim.Text.ToLower())))
-            {
-                dgvNhanvien.Rows.Add(x.NhanVien.Id, $"{x.NhanVien.Ho} {x.NhanVien.TenDem} {x.NhanVien.Ten}",
-                    x.NhanVien.Sdt, x.NhanVien.GioiTinh, x.NhanVien.DiaChi, x.ChucVu.Ten);
-            }
+            //dgvNhanvien.Rows.Clear();
+            //foreach (var x in _nhanvienViewService.GetAllNhanVienViews().Where(c=>c.NhanVien.DiaChi.ToLower().Contains(txtTim.Text.ToLower())))
+            //{
+            //    dgvNhanvien.Rows.Add(x.NhanVien.Id, $"{x.NhanVien.Ho} {x.NhanVien.TenDem} {x.NhanVien.Ten}",
+            //        x.NhanVien.Sdt, x.NhanVien.GioiTinh, x.NhanVien.DiaChi, x.ChucVu.Ten);
+            //}
 
             //Cach 2:
 
@@ -141,6 +150,11 @@ namespace _3_GUI
             //    dgvNhanvien.Rows.Add(x.NhanVien.Id, $"{x.NhanVien.Ho} {x.NhanVien.TenDem} {x.NhanVien.Ten}",
             //        x.NhanVien.Sdt, x.NhanVien.GioiTinh, x.NhanVien.DiaChi, x.ChucVu.Ten);
             //}
+
+
+
+
+
         }
     }
 }
